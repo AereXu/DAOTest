@@ -1,0 +1,15 @@
+*.iml
+.idea
+*.bak
+*.swp
+*.orig
+*.o
+*.a
+*.class
+*.jar
+*.ear
+*.rar
+*/.deps/*
+target
+release
+.deps
