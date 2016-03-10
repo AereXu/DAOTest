@@ -2,6 +2,7 @@ package com.aerexu.test.DAO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.Query;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.List;
 /**
  * Created by epxpxpx on 2/23/2016.
  */
-public abstract class GenericJPADAO <T, ID extends Serializable>
-        implements GenericDAO<T, ID>  {
+public abstract class GenericJPADAO<T, ID extends Serializable>
+        implements GenericDAO<T, ID> {
 
     private Class<T> persistentClass;
     private EntityManager manager;
@@ -49,7 +50,7 @@ public abstract class GenericJPADAO <T, ID extends Serializable>
         T entity;
         if (lock) {
             entity = getManager().find(getPersistentClass(), id, LockModeType.PESSIMISTIC_WRITE);
-        }else {
+        } else {
             entity = getManager().find(getPersistentClass(), id);
         }
         return entity;
@@ -65,12 +66,25 @@ public abstract class GenericJPADAO <T, ID extends Serializable>
         return entity;
     }
 
-    public T refreshEntity(T entity){
+    public T refreshEntity(T entity) {
         getManager().refresh(entity);
         return entity;
     }
 
     public void deleteEntity(T entity) {
+        getManager().remove(entity);
+    }
 
+    @SuppressWarnings("unchecked")
+    public List<T> getNamedQueryResults(String namedQuery, Object... args) {
+        Query q = getManager().createNamedQuery(namedQuery, persistentClass);
+        Object paraString;
+        Object paraArgs;
+        for (int i = 0; i < args.length; i += 2) {
+            paraString = args[i];
+            paraArgs = args[i + 1];
+            q.setParameter((String) paraString, paraArgs);
+        }
+        return q.getResultList();
     }
 }

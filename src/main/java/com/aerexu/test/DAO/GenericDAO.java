@@ -33,4 +33,6 @@ public interface GenericDAO<T, ID extends Serializable> {
     T refreshEntity(T entity);
 
     void deleteEntity(T entity);
+
+    public List<T> getNamedQueryResults(String namedQuery, Object... args);
 }
